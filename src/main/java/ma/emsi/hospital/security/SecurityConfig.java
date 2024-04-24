@@ -1,5 +1,7 @@
 package ma.emsi.hospital.security;
 
+import lombok.AllArgsConstructor;
+import ma.emsi.hospital.security.service.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +20,13 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
+@AllArgsConstructor
 public class SecurityConfig {
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private UserDetailServiceImpl userDetailServiceImpl;
 
-    @Bean
+    //@Bean
     public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource){
         return new JdbcUserDetailsManager(dataSource);
     }
@@ -46,6 +50,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN");*/
         httpSecurity.authorizeHttpRequests().anyRequest().authenticated(); // any query needs an authentication
         httpSecurity.exceptionHandling().accessDeniedPage("/notAuthorized");
+        httpSecurity.userDetailsService(userDetailServiceImpl);
         return httpSecurity.build(); // return an object of type securityFuliterChain
     }
 }

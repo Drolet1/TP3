@@ -2,6 +2,7 @@ package ma.emsi.hospital;
 
 import ma.emsi.hospital.entities.Patient;
 import ma.emsi.hospital.repository.PatientRepository;
+import ma.emsi.hospital.security.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -28,7 +29,7 @@ public class HospitalApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        /*Patient patient = new Patient();
+        Patient patient = new Patient();
         patient.setId(null);
         patient.setNom("Mohamed");
         patient.setDateNaissance(new Date());
@@ -43,13 +44,13 @@ public class HospitalApplication implements CommandLineRunner {
                 .dateNaissance(new Date())
                 .score(56)
                 .malade(true)
-                .build();*/
-        /*patientRepository.save(new Patient(null, "Yassine", new Date(), false, 123));
+                .build();
+        patientRepository.save(new Patient(null, "Yassine", new Date(), false, 123));
         patientRepository.save(new Patient(null, "Hanane", new Date(), true, 321));
-        patientRepository.save(new Patient(null, "Imane", new Date(), false, 456));*/
+        patientRepository.save(new Patient(null, "Imane", new Date(), false, 456));
     }
 
-    @Bean
+    //@Bean
     CommandLineRunner commandLineRunner(JdbcUserDetailsManager jdbcUserDetailsManager){
         PasswordEncoder passwordEncoder = passwordEncoder();
         return args -> {
@@ -71,6 +72,23 @@ public class HospitalApplication implements CommandLineRunner {
                 jdbcUserDetailsManager.createUser(
                         User.withUsername("admin2").password(passwordEncoder.encode("1234")).roles("USER", "ADMIN").build());
             }
+        };
+    }
+
+    //@Bean
+    CommandLineRunner commandLineRunnerUserDetails(AccountService accountService){
+        return args -> {
+            //accountService.addNewRole("USER");
+            //accountService.addNewRole("ADMIN");
+            accountService.addNewUser("user1", "1234", "1234", "user1@gmail.com");
+            accountService.addNewUser("user2", "1234", "1234", "user2@gmail.com");
+            accountService.addNewUser("admin", "1234", "1234", "admin@gmail.com");
+
+            accountService.addRoleToUser("user1", "USER");
+            accountService.addRoleToUser("user2", "USER");
+            accountService.addRoleToUser("admin", "USER");
+            accountService.addRoleToUser("admin", "ADMIN");
+
         };
     }
 
